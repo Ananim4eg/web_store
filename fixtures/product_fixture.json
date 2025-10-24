@@ -1,0 +1,44 @@
+[
+{
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+        "product_name": "яблоко",
+        "description": "",
+        "image": "",
+        "category": 1,
+        "price": 153.7,
+        "created_at": "2025-10-24",
+        "update_at": "2025-10-24"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 4,
+    "fields": {
+        "product_name": "стул",
+        "description": "",
+        "image": "",
+        "category": 2,
+        "price": 4000.0,
+        "created_at": "2025-10-24",
+        "update_at": "2025-10-24"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "category_name": "еда",
+        "description": "продукты питания"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "category_name": "мебель",
+        "description": "предметы интерьера"
+    }
+}
+]
