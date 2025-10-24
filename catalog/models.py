@@ -5,6 +5,9 @@ class Category(models.Model):
     category_name = models.CharField(max_length=50, verbose_name='Наименование')
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
 
+    def __str__(self):
+        return f'{self.category_name}\n{self.description}'
+
     class Meta:
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
@@ -13,11 +16,14 @@ class Category(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length=100, verbose_name='Наименование')
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
-    image = models.ImageField(upload_to='product_photo/', verbose_name='Фотография')
+    image = models.ImageField(upload_to='product_photo/', verbose_name='Фотография', null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
     price = models.FloatField(verbose_name='Цена')
     created_at = models.DateField(auto_now_add=True, verbose_name='Дата создания')
     update_at = models.DateField(auto_now=True, verbose_name='Дата последнего изменения')
+
+    def __str__(self):
+        return f'{self.product_name}\n{self.description}\n{self.price}\n{self.category}'
 
     class Meta:
         verbose_name = 'продукт'
