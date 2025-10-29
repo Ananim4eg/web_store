@@ -12,9 +12,9 @@ def contacts(request):
     return render(request, 'contacts.html')
 
 
-def product_info(request, product_id):
+def products_info(request, product_id):
     """Контроллер для рендеринга страницы с информацией о товаре"""
-    product = Product.objects.get(product_id)
+    product = Product.objects.get(id=product_id)
     context = {
         'product': product
     }
