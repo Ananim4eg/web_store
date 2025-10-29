@@ -4,7 +4,11 @@ from catalog.models import Product
 
 def home(request):
     """Контроллер для рендеринга стартовой страницы"""
-    return render(request, 'home.html')
+    products = Product.objects.all()
+    context = {
+        'products': products
+    }
+    return render(request, 'home.html', context=context)
 
 
 def contacts(request):
