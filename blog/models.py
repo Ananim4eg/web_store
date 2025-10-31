@@ -8,7 +8,7 @@ class Blog(models.Model):
     preview = models.ImageField(upload_to='blog_preview/', verbose_name='Превью', null=True, blank=True)
     created_at = models.DateField(auto_now_add=True, verbose_name='Дата создания')
     publications_status = models.BooleanField(verbose_name="Признак публикации")
-    count_views = models.IntegerField(verbose_name='Количество просмотров')
+    count_views = models.IntegerField(null=True, blank=True, verbose_name='Количество просмотров')
 
     def __str__(self):
         return self.title
