@@ -1,0 +1,39 @@
+{% extends '..\..\catalog\templates\base.html' %}
+
+{% block content %}
+
+{% include '..\..\catalog\templates\main_menu.html' %}
+
+<div class="row mb-2">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="{% url 'blog:article_create' %}" class="btn btn-primary me-md-2">Опубликовать статью</a>
+    </div>
+    <h1 class="mb-4 text-center fst-italic">Опубликованные статьи</h1>
+    {% for art in article %}
+    {% if art.publications_status %}
+    <div class="col-md-6">
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <h3 class="mb-0 fst-italic">{{ art.title }}</h3>
+                <div class="text-body-secondary">
+                    {{ art.created_at|date:"d E" }}
+                </div>
+                <p class="mb-auto">{{ art.content|truncatechars:120 }}</p>
+                <a href="http://127.0.0.1:8000/blog/article/{{ art.id }}"
+                   class="icon-link gap-1 icon-link-hover stretched-link">
+                </a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+                {% if art.preview %}
+                <img src="{{ art.preview.url }}" role="img" width="200" height="250" alt="...">
+                {% else %}
+                <img src="..." role="img" width="200" height="250" alt="...">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}
