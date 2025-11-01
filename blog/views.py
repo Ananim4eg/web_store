@@ -16,7 +16,7 @@ class BlogCreateView(CreateView):
     model = Blog
     fields = ['title', 'content', 'preview', 'publications_status']
     template_name = 'blog_article_create.html'
-    success_url = reverse_lazy('blog_main')
+    success_url = reverse_lazy('blog:blog_main')
 
 class BlogDetailView(DetailView):
     """Контроллер для страницы с подробной информацией о статье"""
@@ -25,7 +25,15 @@ class BlogDetailView(DetailView):
     context_object_name = 'article'
 
 class BlogUpdateView(UpdateView):
-    pass
+    """Контроллер для страницы изменения статьи"""
+    model = Blog
+    fields = ['title', 'content', 'preview', 'publications_status']
+    template_name = 'blog_article_update.html'
+    context_object_name = 'article'
+    success_url = reverse_lazy('blog:blog_main')
 
 class BlogDeleteView(DeleteView):
-    pass
+    """Контроллер для страницы удаления статьи"""
+    model = Blog
+    template_name = 'blog_article_delete.html'
+    success_url = reverse_lazy('blog:blog_main')
