@@ -1,0 +1,22 @@
+{% extends '..\..\catalog\templates\base.html' %}
+
+{% block content %}
+
+{% include '..\..\catalog\templates\main_menu.html' %}
+
+<div class="container mt-5">
+    {% if article.preview %}
+    <img src="{{ article.preview.url }}" role="img" width="400" height="300" alt="...">
+    {% else %}
+    <img src="..." role="img" width="200" height="250" alt="...">
+    {% endif %}
+    <h1 class="mb-4">{{ article.title }}</h1>
+    <p>{{ article.content }}</p>
+    <p>Создано: {{ article.created_at }}</p>
+    <p>Кол-во просмотров: {{ article.count_views }}</p>
+    <a href="{% url 'blog:article_update' article.pk %}" class="btn btn-secondary">Редактировать</a>
+    <a href="{% url 'blog:article_delete' article.pk %}" class="btn btn-danger">Удалить</a>
+    <a href="{% url 'blog:blog_main' %}" class="btn btn-primary">Вернуться к списку</a>
+</div>
+
+{% endblock %}
