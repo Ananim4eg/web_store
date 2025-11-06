@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
+from catalog.forms import ProductForm
 from catalog.models import Product
 from django.views.generic import ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -27,7 +28,7 @@ class ProductInfoDetailView(DetailView):
 class ProductCreateView(CreateView):
     """Контроллер для страницы добавления продукта"""
     model = Product
-    fields = ['product_name', 'description', 'image', 'category', 'price']
+    form_class = ProductForm
     template_name = 'catalog/create_product.html'
     success_url = reverse_lazy('catalog:home_list')
 
@@ -35,7 +36,7 @@ class ProductCreateView(CreateView):
 class ProductUpdateView(UpdateView):
     """Контроллер для страницы изменения продукта"""
     model = Product
-    fields = ['product_name', 'description', 'image', 'category', 'price']
+    form_class = ProductForm
     template_name = 'catalog/update_product.html'
     context_object_name = 'product'
 
