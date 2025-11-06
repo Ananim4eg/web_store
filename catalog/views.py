@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 
 from catalog.models import Product
-from django.views.generic import ListView, TemplateView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView
 
 
 class HomeListView(ListView):
@@ -42,3 +42,10 @@ class ProductUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
 
+
+class ProductDeleteView(DeleteView):
+    """Контроллер для страницы подтверждения удаления продукта"""
+    model = Product
+    template_name = 'catalog/delete_product.html'
+    context_object_name = 'product'
+    success_url = reverse_lazy('catalog:home_list')
