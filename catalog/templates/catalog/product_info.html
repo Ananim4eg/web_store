@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include 'main_menu.html' %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">{{ product.product_name|capfirst }}</h1>
+</div>
+
+<div class="row text-center">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ product.price }}р.</h4>
+            </div>
+            <div class="card-body">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-thumbnail">
+                {% else %}
+                <img src="Нет изображения" class="img-thumbnail">
+                {% endif %}
+                <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                    <li>Категория продукта - {{ product.category }}</li>
+                    {% if product.description %}
+                    <li>Описание - {{ product.description }}</li>
+                    {% endif %}
+                    <li>Дата создания - {{ product.created_at|date:"d M Y" }}</li>
+                    <li>Дата последнего обновления - {{ product.update_at|date:"d M Y" }}</li>
+                </ul>
+                <a href="http://127.0.0.1:8000/" class="btn btn-lg btn-block btn-outline-primary">Назад</a>
+                <a href="{% url 'catalog:product_update' pk=product.pk %}"
+                   class="btn btn-lg btn-block btn-outline-secondary">Редактировать</a>
+                <a href="{% url 'catalog:product_delete' pk=product.pk %}"
+                   class="btn btn-lg btn-block btn-outline-danger">Удалить</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-3"></div>
+</div>
+
+{% endblock %}

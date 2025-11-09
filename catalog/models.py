@@ -6,7 +6,7 @@ class Category(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
 
     def __str__(self):
-        return f'{self.category_name}\n{self.description}'
+        return f'{self.category_name}, {self.description}'
 
     class Meta:
         verbose_name = 'категория'
@@ -23,7 +23,7 @@ class Product(models.Model):
     update_at = models.DateField(auto_now=True, verbose_name='Дата последнего изменения')
 
     def __str__(self):
-        return f'{self.product_name}\n{self.description}\n{self.price}\n{self.category}'
+        return f'{self.product_name}, {self.category}, {self.description}, {self.price}'
 
     class Meta:
         verbose_name = 'продукт'
