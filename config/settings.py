@@ -147,3 +147,5 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'new.mail.test@mail.ru'
 EMAIL_HOST_PASSWORD = os.getenv('MAIL_APP_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+LOGIN_REDIRECT_URL = "catalog:home_list"

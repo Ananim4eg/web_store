@@ -1,4 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 from users.models import CustomUser
 
@@ -27,3 +28,21 @@ class CustomUserCreateForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = CustomUser
         fields = ("email", "password1", "password2")
+
+class CustomUserLogin(AuthenticationForm):
+    """Форма авторизации пользователя"""
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserLogin, self).__init__(*args, **kwargs)
+
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Введите почту',
+            'style': 'width: 300px;'
+        })
+
+        self.fields['password'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Введите пароль',
+            'style': 'width: 300px;'
+        })

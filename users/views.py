@@ -1,9 +1,10 @@
 from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 
-from users.forms import CustomUserCreateForm
+from users.forms import CustomUserCreateForm, CustomUserLogin
 
 
 class RegisterView(FormView):
@@ -23,3 +24,8 @@ class RegisterView(FormView):
         message = 'Регистрация прошла успешно. Спасибо, что выбрали нас!'
         recipient_list = [user_email]
         send_mail(subject, message, from_email, recipient_list)
+
+
+class CustomLoginView(LoginView):
+    form_class = CustomUserLogin
+    template_name = 'login.html'
