@@ -29,3 +29,6 @@ class RegisterView(FormView):
 class CustomLoginView(LoginView):
     form_class = CustomUserLogin
     template_name = 'login.html'
+
+
+
