@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Нарушение прав доступа</title>
+</head>
+<body>
+    <h1>У Вас нет права на удаление продукта</h1>
+    <p>{{ exception }}</p>
+    <a href="{% url 'catalog:home_list' %}">Вернуться на главную</a>
+</body>
+</html>

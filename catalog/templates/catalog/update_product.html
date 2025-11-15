@@ -9,6 +9,20 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
+
+        {% if publications_status %}
+
+        <p>{{ model.publications_status }}</p>
+
+        {% else %}
+
+        <p>
+            <label>Статус:</label>
+            {{ object.publications_status|yesno:"Публикуется,Не публикуется" }}
+        </p>
+
+        {% endif %}
+
         <button type="submit" class="btn btn-primary">Применить</button>
         <a href="{% url 'catalog:product_detail' pk=product.pk %}" class="btn btn-secondary">Отмена</a>
     </form>

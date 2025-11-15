@@ -1,4 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 
 from catalog.forms import ProductForm
@@ -40,6 +42,25 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'catalog/update_product.html'
     context_object_name = 'product'
 
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+
+        if not self.request.user.has_perm('catalog.publications_status'):
+            form.fields.pop('publications_status', None)
+
+        return form
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['publications_status'] = self.request.user.has_perm('catalog.publications_status')
+        return context
+
     def get_success_url(self):
         return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
 
@@ -50,3 +71,14 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'catalog/delete_product.html'
     context_object_name = 'product'
     success_url = reverse_lazy('catalog:home_list')
+    permission_required = 'catalog.Can_delete_продукт'
+
+    def handle_no_permission(self):
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied("У вас нет прав на удаление этого объекта.")
+
+
+class Error403View(TemplateView):
+    """Контроллер для страницы с ошибкой доступа"""
+    template_name = 'catalog/403.html'
+
