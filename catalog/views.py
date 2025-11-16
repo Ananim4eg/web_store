@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 
 from catalog.forms import ProductForm
@@ -24,6 +25,12 @@ class ProductInfoDetailView(LoginRequiredMixin, DetailView):
     template_name = 'catalog/product_info.html'
     context_object_name = 'product'
 
+    def get_context_data(self, **kwargs):
+        """Добавляем флаг с определенным правом и передаем в форму"""
+        context = super().get_context_data(**kwargs)
+        context['is_moderator'] = self.request.user.groups.filter(name='Модератор продуктов').exists()
+        return context
+
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
     """Контроллер для страницы добавления продукта"""
@@ -32,6 +39,11 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     template_name = 'catalog/create_product.html'
     success_url = reverse_lazy('catalog:home_list')
 
+    def form_valid(self, form):
+        """Добавляем текущего авторизованного пользователя как владельца при создании продукта"""
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """Контроллер для страницы изменения продукта"""
@@ -39,6 +51,36 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProductForm
     template_name = 'catalog/update_product.html'
     context_object_name = 'product'
+
+    def get_object(self, queryset = None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner:
+            self.object.save()
+            return self.object
+        raise PermissionDenied
+
+
+    def get_form(self, form_class=None):
+        """Формируем поля формы в зависимости от прав пользователя"""
+        form = super().get_form(form_class)
+
+        if not self.request.user.has_perm('catalog.publications_status'):
+            form.fields.pop('publications_status', None)
+
+        return form
+
+    def get_form_kwargs(self):
+        """Передаем текущего пользователя в форму"""
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        """Добавляем флаг с определенным правом и передаем в форму"""
+        context = super().get_context_data(**kwargs)
+        context['publications_status'] = self.request.user.has_perm('catalog.publications_status')
+        context['is_moderator'] = self.request.user.groups.filter(name='Модератор продуктов').exists()
+        return context
 
     def get_success_url(self):
         return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
@@ -50,3 +92,11 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'catalog/delete_product.html'
     context_object_name = 'product'
     success_url = reverse_lazy('catalog:home_list')
+    permission_required = 'catalog.Can_delete_продукт'
+
+    def get_object(self, queryset = None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.groups.filter(name='Модератор продуктов'):
+            self.object.save()
+            return self.object
+        raise PermissionDenied
