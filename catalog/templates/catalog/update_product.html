@@ -10,7 +10,7 @@
         {% csrf_token %}
         {{ form.as_p }}
 
-        {% if publications_status %}
+        {% if publications_status or is_moderator %}
 
         <p>{{ model.publications_status }}</p>
 

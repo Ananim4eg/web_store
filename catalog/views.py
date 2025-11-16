@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 
 from catalog.forms import ProductForm
@@ -51,6 +52,13 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'catalog/update_product.html'
     context_object_name = 'product'
 
+    def get_object(self, queryset = None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner:
+            self.object.save()
+            return self.object
+        raise PermissionDenied
+
 
     def get_form(self, form_class=None):
         """Формируем поля формы в зависимости от прав пользователя"""
@@ -71,6 +79,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         """Добавляем флаг с определенным правом и передаем в форму"""
         context = super().get_context_data(**kwargs)
         context['publications_status'] = self.request.user.has_perm('catalog.publications_status')
+        context['is_moderator'] = self.request.user.groups.filter(name='Модератор продуктов').exists()
         return context
 
     def get_success_url(self):
@@ -85,11 +94,9 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('catalog:home_list')
     permission_required = 'catalog.Can_delete_продукт'
 
-    def handle_no_permission(self):
-        from django.core.exceptions import PermissionDenied
-        raise PermissionDenied("У вас нет прав на удаление этого объекта.")
-
-
-class Error403View(TemplateView):
-    """Контроллер для страницы с ошибкой доступа"""
-    template_name = 'catalog/403.html'
+    def get_object(self, queryset = None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.groups.filter(name='Модератор продуктов'):
+            self.object.save()
+            return self.object
+        raise PermissionDenied
