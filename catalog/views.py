@@ -1,6 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from catalog.forms import ProductForm
 from catalog.models import Product
@@ -19,6 +21,7 @@ class ContactsView(TemplateView):
     template_name = 'catalog/contacts.html'
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductInfoDetailView(LoginRequiredMixin, DetailView):
     """Контроллер для рендеринга страницы с информацией о товаре"""
     model = Product
