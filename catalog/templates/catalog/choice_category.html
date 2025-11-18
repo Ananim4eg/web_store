@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include 'main_menu.html' %}
+
+<div class="row">
+    <form method="post">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">Выберите категорию
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            {% for category in categories %}
+            <li><a class="dropdown-item" href="{% url 'catalog:product_list' pk=category.id %}">{{ category.category_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </form>
+</div>
+
+
+{% endblock %}
