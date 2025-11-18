@@ -1,10 +1,16 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from unicodedata import category
 
 from catalog.forms import ProductForm
-from catalog.models import Product
+from catalog.models import Product, Category
 from django.views.generic import ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView
+
+from catalog.services import ProductService
 
 
 class HomeListView(ListView):
@@ -19,6 +25,7 @@ class ContactsView(TemplateView):
     template_name = 'catalog/contacts.html'
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductInfoDetailView(LoginRequiredMixin, DetailView):
     """Контроллер для рендеринга страницы с информацией о товаре"""
     model = Product
@@ -100,3 +107,32 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
             self.object.save()
             return self.object
         raise PermissionDenied
+
+
+class ChoiceCategoryView(ListView):
+    """Контроллер для страницы выбора категории"""
+    model = Category
+    template_name = 'catalog/choice_category.html'
+    context_object_name = 'categories'
+
+
+class ProductListView(LoginRequiredMixin, ListView):
+    """Контроллер для страницы отображения списка продуктов в определенной категории"""
+    model = Product
+    template_name = 'catalog/product_list.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        """Получаем список продуктов, имя категории товаров и передаем в форму"""
+        context = super().get_context_data(**kwargs)
+        context['product_list'] = ProductService.get_products_list_from_category(self.kwargs['pk'])
+        context['category_name'] = context['product_list'][0].category.category_name
+
+        return context
+
+    def get_queryset(self):
+        queryset = cache.get('product_list_queryset')
+        if not queryset:
+            queryset = super().get_queryset()
+            cache.set('product_list_queryset', queryset, 60 * 15)
+        return queryset
