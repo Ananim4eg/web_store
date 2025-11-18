@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -122,8 +123,16 @@ class ProductListView(LoginRequiredMixin, ListView):
     context_object_name = 'product'
 
     def get_context_data(self, **kwargs):
+        """Получаем список продуктов, имя категории товаров и передаем в форму"""
         context = super().get_context_data(**kwargs)
         context['product_list'] = ProductService.get_products_list_from_category(self.kwargs['pk'])
         context['category_name'] = context['product_list'][0].category.category_name
 
         return context
+
+    def get_queryset(self):
+        queryset = cache.get('product_list_queryset')
+        if not queryset:
+            queryset = super().get_queryset()
+            cache.set('product_list_queryset', queryset, 60 * 15)
+        return queryset

@@ -9,8 +9,6 @@ class ProductService:
 
         products_list = Product.objects.filter(category_id=category_id).select_related('category').all()
 
-        print(products_list)
-
         if not products_list.exists():
             return None
         return products_list
